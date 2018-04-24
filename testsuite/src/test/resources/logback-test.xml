@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<appender name="stderr" class="ch.qos.logback.core.ConsoleAppender">
+		<target>System.err</target>
+		<encoder>
+			<pattern><![CDATA[%d{YY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n]]></pattern>
+		</encoder>
+	</appender>
+	<logger name="org.jboss.logging" level="INFO" />
+	<logger name="com.googlecode.flyway" level="INFO" />
+	<logger name="org.springframework" level="INFO" />
+	<logger name="org.hibernate" level="INFO" />
+	<logger name="com.github.cbuschka.lease" level="DEBUG" />
+
+	<root level="info">
+		<appender-ref ref="stderr" />
+	</root>
+</configuration>
