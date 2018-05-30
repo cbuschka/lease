@@ -8,7 +8,10 @@ import org.springframework.boot.test.util.EnvironmentTestUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
@@ -33,15 +36,6 @@ public class LeaseAutoConfigurationTest
 	}
 
 	@Test
-	public void defaults()
-	{
-		load(DefaultsConfiguration.class, "");
-		LeaseManagerService leaseService = this.context.getBean(LeaseManagerService.class);
-		assertThat(leaseService, instanceOf(LeaseManagerService.class));
-		assertThat(leaseService.isEnabled(), is(true));
-	}
-
-	@Test
 	public void defaultsWithDataSource()
 	{
 		load(DefaultsWithDataSourceConfiguration.class, "");
@@ -61,34 +55,17 @@ public class LeaseAutoConfigurationTest
 	}
 
 	@Configuration
-	static class DefaultsConfiguration
-	{
-	}
-
-	@Configuration
-	static class CustomLeaseManagementConfiguration
-	{
-		@Bean
-		public LeaseManagerConfigurationCustomizer customize()
-		{
-			return new LeaseManagerConfigurationCustomizer()
-			{
-				@Override
-				public void customize(LeaseManagerConfiguration config)
-				{
-				}
-			};
-		}
-	}
-
-
-	@Configuration
 	static class DefaultsWithDataSourceConfiguration
 	{
 		@Bean
 		public DataSource dataSource()
 		{
 			return new DriverManagerDataSource("jdbc:h2:", "sa", "");
+		}
+
+		@Bean
+		public PlatformTransactionManager transactionManager(DataSource dataSource) {
+			return new DataSourceTransactionManager(dataSource);
 		}
 
 		@Bean

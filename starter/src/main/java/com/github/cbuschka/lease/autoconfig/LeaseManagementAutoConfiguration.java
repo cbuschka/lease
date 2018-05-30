@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -17,7 +18,7 @@ public class LeaseManagementAutoConfiguration
 	@Autowired(required = false)
 	private List<LeaseManagerConfigurationCustomizer> configurationCustomizers;
 	@Autowired(required = false)
-	private List<LeaseManagementConfigurer> configurers;
+	private List<LeaseManagerBuilderConfigurer> configurers;
 
 	@Bean
 	public LeaseManagerService leaseManagerService()
@@ -35,7 +36,7 @@ public class LeaseManagementAutoConfiguration
 		builder.setLeaseManagerConfiguration(leaseManagerConfiguration);
 		if (this.configurers != null)
 		{
-			for (LeaseManagementConfigurer configurer : this.configurers)
+			for (LeaseManagerBuilderConfigurer configurer : this.configurers)
 			{
 				configurer.configure(builder);
 			}
@@ -56,9 +57,10 @@ public class LeaseManagementAutoConfiguration
 		return leaseManagerConfiguration;
 	}
 
+	@Configuration
 	@ConditionalOnBean({DataSource.class})
-	@ConditionalOnMissingBean(LeaseManagementConfigurer.class)
-	public static class DefaultJdbcLeaseManagementConfigurer implements LeaseManagementConfigurer
+	@ConditionalOnMissingBean(LeaseManagerBuilderConfigurer.class)
+	public static class DefaultJdbcLeaseManagerBuilderConfigurer implements LeaseManagerBuilderConfigurer
 	{
 		@Autowired
 		private DataSource dataSource;
